@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "FastApiAuthentication"
+version = "0.1.0"
+description = "A FastAPI authentication project"
+authors = ["Dmitry <da-boyko@mail.ru>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.1"
+pyjwt = {extras = ["crypto"], version = "^2.8.0"}
+uvicorn = {extras = ["standard"], version = "^0.30.1"}
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.31"}
+aiosqlite = "^0.20.0"
+pydantic-settings = "^2.3.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
