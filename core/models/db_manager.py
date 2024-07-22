@@ -12,8 +12,8 @@ from core.config import settings
 class DatabaseManager:
     def __init__(self):
         self.engine = create_async_engine(
-            url=settings.db_url,
-            echo=settings.db_echo,
+            url=settings.db.url,
+            echo=settings.db.echo,
         )
         self.session_factory = async_sessionmaker(
             bind=self.engine,
