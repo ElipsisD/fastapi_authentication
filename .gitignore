@@ -267,3 +267,4 @@ static
 /server_config/
 
 db.sqlite
+/certs/
