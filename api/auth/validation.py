@@ -3,27 +3,16 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 from starlette import status
 
+from api.auth.utils import get_user_by_username
 from api.users.schemas import UserSchema
 from auth import utils as auth_utils
 
 oauth2_schema = OAuth2PasswordBearer(
     tokenUrl="/api/auth/login/"
 )
-dima = UserSchema(
-    username="dima",
-    password=auth_utils.hash_password("secret"),
-)
-ivan = UserSchema(
-    username="ivan",
-    password=auth_utils.hash_password("qwerty"),
-)
-users_db: dict[str, UserSchema] = {
-    dima.username: dima,
-    ivan.username: ivan,
-}
 
 
-def validate_auth_user(
+async def validate_auth_user(
     username: str = Form(),
     password: str = Form(),
 ):
@@ -31,7 +20,7 @@ def validate_auth_user(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="invalid username or password",
     )
-    if not (user := users_db.get(username)):
+    if not (user := await get_user_by_username(username)):
         raise unauthed_exc
 
     if not auth_utils.validate_password(
@@ -59,19 +48,22 @@ def get_current_token_payload(
     return payload
 
 
-def get_current_auth_user(
+async def get_current_auth_user(
     payload: dict = Depends(get_current_token_payload),
 ) -> UserSchema:
     username: str | None = payload.get("sub")
-    if user := users_db.get(username):
-        return user
+    if user := await get_user_by_username(username):
+        return UserSchema(
+            username=user.username,
+            password=user.password,
+        )
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="token invalid",
     )
 
 
-def get_current_active_auth_user(user: UserSchema = Depends(get_current_auth_user)):
+async def get_current_active_auth_user(user: UserSchema = Depends(get_current_auth_user)):
     if user.active:
         return user
 
