@@ -1,15 +1,12 @@
-from fastapi import Depends, Form, HTTPException
+from fastapi import Depends, Form, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
-from starlette import status
 
 from api.auth.utils import get_user_by_username
 from api.users.schemas import UserSchema
 from auth import utils as auth_utils
 
-oauth2_schema = OAuth2PasswordBearer(
-    tokenUrl="/api/auth/login/"
-)
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="/api/auth/login/")
 
 
 async def validate_auth_user(
@@ -63,7 +60,9 @@ async def get_current_auth_user(
     )
 
 
-async def get_current_active_auth_user(user: UserSchema = Depends(get_current_auth_user)):
+async def get_current_active_auth_user(
+    user: UserSchema = Depends(get_current_auth_user),
+):
     if user.active:
         return user
 
