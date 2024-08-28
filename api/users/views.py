@@ -1,13 +1,14 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.users import crud
 from api.users.dependencies import get_user_data_for_registration
 from api.users.schemas import UserResponseSchema, UserSchema
 from api.auth.validation import get_current_active_auth_user, get_current_token_payload
-from core.models import db_manager
+from core.models import User, db_manager
 
 router = APIRouter(tags=["Users"])
 
@@ -41,6 +42,12 @@ async def register_new_user(
     user_in: UserSchema = Depends(get_user_data_for_registration),
     session: AsyncSession = Depends(db_manager.session_dependency),
 ):
+    if await session.execute(select(User).filter_by(username=user_in.username)):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="User with same 'username' already registered",
+        )
+
     user = await crud.create_user(
         session=session,
         user_data=user_in,
