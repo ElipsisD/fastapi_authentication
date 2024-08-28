@@ -31,7 +31,7 @@ async def get_user_info(
 )
 async def get_all_users(
     user: UserSchema = Depends(get_current_active_auth_user),
-    session: AsyncSession = Depends(db_manager.scoped_session_dependency),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ):
     return await crud.get_users(session=session)
 
@@ -39,7 +39,7 @@ async def get_all_users(
 @router.post("/register/")
 async def register_new_user(
     user_in: UserSchema = Depends(get_user_data_for_registration),
-    session: AsyncSession = Depends(db_manager.scoped_session_dependency),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ):
     user = await crud.create_user(
         session=session,

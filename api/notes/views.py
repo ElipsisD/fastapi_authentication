@@ -10,7 +10,7 @@ router = APIRouter(tags=["Notes"])
 
 @router.get("/", response_model=list[Note])
 async def get_notes(
-    session: AsyncSession = Depends(db_manager.scoped_session_dependency),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ):
     return await crud.get_notes(session)
 
@@ -29,7 +29,7 @@ async def get_note(
 )
 async def create_note(
     note_data: NoteCreate,
-    session: AsyncSession = Depends(db_manager.scoped_session_dependency),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ):
     return await crud.create_note(session, note_data)
 
@@ -38,7 +38,7 @@ async def create_note(
 async def update_note(
     note_data: NoteUpdate,
     note: Note = Depends(note_by_id),
-    session: AsyncSession = Depends(db_manager.scoped_session_dependency),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ):
     return await crud.update_note(
         session=session,
@@ -51,7 +51,7 @@ async def update_note(
 async def partial_update_note(
     note_data: NoteUpdatePartial,
     note: Note = Depends(note_by_id),
-    session: AsyncSession = Depends(db_manager.scoped_session_dependency),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ):
     return await crud.update_note(
         session=session,
@@ -67,7 +67,7 @@ async def partial_update_note(
 )
 async def delete_note(
     note: Note = Depends(note_by_id),
-    session: AsyncSession = Depends(db_manager.scoped_session_dependency),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> None:
     await crud.delete_note(
         session=session,

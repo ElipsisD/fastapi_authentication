@@ -7,7 +7,7 @@ from . import crud
 
 async def note_by_id(
     note_id: Annotated[int, Path],
-    session: AsyncSession = Depends(db_manager.scoped_session_dependency),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> Note:
     note = await crud.get_note(session, note_id)
     if note is not None:

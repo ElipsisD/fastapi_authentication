@@ -15,7 +15,7 @@ async def get_users(session: AsyncSession) -> list[User]:
 
 async def create_user(
     user_data: UserSchema,
-    session: AsyncSession = Depends(db_manager.scoped_session_dependency),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> User:
     user = User(**user_data.model_dump())
     session.add(user)
