@@ -1,7 +1,11 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Result, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import User, db_manager
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def get_user_by_username(username: str) -> User | None:

@@ -7,6 +7,6 @@ __all__ = (
 )
 
 from .base import Base
+from .db_manager import DatabaseManager, db_manager
 from .note import Note
 from .user import User
-from .db_manager import db_manager, DatabaseManager

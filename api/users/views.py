@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.auth.validation import get_current_active_auth_user, get_current_token_payload
 from api.users import crud
 from api.users.dependencies import get_user_data_for_registration
 from api.users.schemas import UserResponseSchema, UserSchema
-from api.auth.validation import get_current_active_auth_user, get_current_token_payload
 from core.models import User, db_manager
 
 router = APIRouter(tags=["Users"])
@@ -17,7 +17,7 @@ router = APIRouter(tags=["Users"])
 async def get_user_info(
     payload: dict = Depends(get_current_token_payload),
     user: UserSchema = Depends(get_current_active_auth_user),
-):
+) -> dict[str, bool | datetime | str]:
     iat = payload.get("iat")
     return {
         "username": user.username,
@@ -31,9 +31,9 @@ async def get_user_info(
     response_model=list[UserResponseSchema],
 )
 async def get_all_users(
-    user: UserSchema = Depends(get_current_active_auth_user),
+    user: UserSchema = Depends(get_current_active_auth_user),  # noqa: ARG001
     session: AsyncSession = Depends(db_manager.session_dependency),
-):
+) -> list[User]:
     return await crud.get_users(session=session)
 
 
@@ -41,7 +41,7 @@ async def get_all_users(
 async def register_new_user(
     user_in: UserSchema = Depends(get_user_data_for_registration),
     session: AsyncSession = Depends(db_manager.session_dependency),
-):
+) -> dict[str, str]:
     if await session.execute(select(User).filter_by(username=user_in.username)):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

@@ -1,14 +1,14 @@
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
-    create_async_engine,
     async_sessionmaker,
+    create_async_engine,
 )
 
 from core.config import settings
 
 
 class DatabaseManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.engine = create_async_engine(
             url=settings.db.url,
             echo=settings.db.echo,

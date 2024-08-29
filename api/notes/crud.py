@@ -27,6 +27,7 @@ async def update_note(
     session: AsyncSession,
     note: Note,
     note_data: NoteUpdate | NoteUpdatePartial,
+    *,
     partial: bool = False,
 ) -> Note:
     for name, value in note_data.model_dump(exclude_unset=partial).items():
@@ -38,6 +39,6 @@ async def update_note(
 async def delete_note(
     session: AsyncSession,
     note: Note,
-):
+) -> None:
     await session.delete(note)
     await session.commit()

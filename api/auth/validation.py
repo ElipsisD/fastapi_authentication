@@ -5,6 +5,7 @@ from jwt import InvalidTokenError
 from api.auth.utils import get_user_by_username
 from api.users.schemas import UserSchema
 from auth import utils as auth_utils
+from core.models import User
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="/api/auth/login/")
 
@@ -12,7 +13,7 @@ oauth2_schema = OAuth2PasswordBearer(tokenUrl="/api/auth/login/")
 async def validate_auth_user(
     username: str = Form(),
     password: str = Form(),
-):
+) -> User:
     unauthed_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="invalid username or password",
@@ -34,14 +35,14 @@ async def validate_auth_user(
 
 def get_current_token_payload(
     token: str = Depends(oauth2_schema),
-) -> dict:
+) -> str:
     try:
         payload = auth_utils.decode_jwt(token=token)
     except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="invalid token error",
-        )
+        ) from None
     return payload
 
 
@@ -62,7 +63,7 @@ async def get_current_auth_user(
 
 async def get_current_active_auth_user(
     user: UserSchema = Depends(get_current_auth_user),
-):
+) -> UserSchema:
     if user.active:
         return user
 
