@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from .dependencies import note_by_id
@@ -28,7 +30,7 @@ async def get_note(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_note(
-    note_data: NoteCreate,
+    note_data: Annotated[NoteCreateSchema, Depends()],
     session: AsyncSession = Depends(db_manager.session_dependency),
 ):
     return await crud.create_note(session, note_data)
@@ -36,7 +38,7 @@ async def create_note(
 
 @router.put("/{note_id}/")
 async def update_note(
-    note_data: NoteUpdate,
+    note_data: Annotated[NoteUpdateSchema, Depends()],
     note: Note = Depends(note_by_id),
     session: AsyncSession = Depends(db_manager.session_dependency),
 ):
@@ -49,7 +51,7 @@ async def update_note(
 
 @router.patch("/{note_id}/")
 async def partial_update_note(
-    note_data: NoteUpdatePartial,
+    note_data: Annotated[NoteUpdatePartialSchema, Depends()],
     note: Note = Depends(note_by_id),
     session: AsyncSession = Depends(db_manager.session_dependency),
 ):
