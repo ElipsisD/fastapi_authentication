@@ -2,38 +2,47 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from .dependencies import note_by_id
-from core.models import db_manager
+
 from api.notes import crud
-from api.notes.schemas import Note, NoteCreate, NoteUpdate, NoteUpdatePartial
+from api.notes.schemas import (
+    NoteCreateSchema,
+    NoteSchemaSchema,
+    NoteUpdatePartialSchema,
+    NoteUpdateSchema,
+)
+from core.models import Note, db_manager
+
+from .dependencies import note_by_id
 
 router = APIRouter(tags=["Notes"])
 
 
-@router.get("/", response_model=list[Note])
+@router.get("/", response_model=list[NoteSchemaSchema])
 async def get_notes(
     session: AsyncSession = Depends(db_manager.session_dependency),
-):
-    return await crud.get_notes(session)
+) -> list[NoteSchemaSchema]:
+    note_objects = await crud.get_notes(session)
+    return [NoteSchemaSchema.model_validate(note) for note in note_objects]
 
 
-@router.get("/{note_id}/", response_model=Note)
+@router.get("/{note_id}/", response_model=NoteSchemaSchema)
 async def get_note(
     note: Note = Depends(note_by_id),
-):
-    return note
+) -> NoteSchemaSchema:
+    return NoteSchemaSchema.model_validate(note)
 
 
 @router.post(
     "/",
-    response_model=Note,
+    response_model=NoteSchemaSchema,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_note(
     note_data: Annotated[NoteCreateSchema, Depends()],
     session: AsyncSession = Depends(db_manager.session_dependency),
-):
-    return await crud.create_note(session, note_data)
+) -> NoteSchemaSchema | None:
+    note = await crud.create_note(session, note_data)
+    return NoteSchemaSchema.model_validate(note)
 
 
 @router.put("/{note_id}/")
@@ -41,12 +50,13 @@ async def update_note(
     note_data: Annotated[NoteUpdateSchema, Depends()],
     note: Note = Depends(note_by_id),
     session: AsyncSession = Depends(db_manager.session_dependency),
-):
-    return await crud.update_note(
+) -> NoteSchemaSchema:
+    note = await crud.update_note(
         session=session,
         note=note,
         note_data=note_data,
     )
+    return NoteSchemaSchema.model_validate(note)
 
 
 @router.patch("/{note_id}/")
@@ -54,13 +64,14 @@ async def partial_update_note(
     note_data: Annotated[NoteUpdatePartialSchema, Depends()],
     note: Note = Depends(note_by_id),
     session: AsyncSession = Depends(db_manager.session_dependency),
-):
-    return await crud.update_note(
+) -> NoteSchemaSchema:
+    note = await crud.update_note(
         session=session,
         note=note,
         note_data=note_data,
         partial=True,
     )
+    return NoteSchemaSchema.model_validate(note)
 
 
 @router.delete(

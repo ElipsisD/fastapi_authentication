@@ -3,27 +3,27 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 
-class NoteBase(BaseModel):
+class NoteBaseSchema(BaseModel):
     text: str
     created_at: datetime
     active: bool
 
 
-class NoteCreate(NoteBase):
+class NoteCreateSchema(NoteBaseSchema):
     pass
 
 
-class NoteUpdate(NoteCreate):
+class NoteUpdateSchema(NoteCreateSchema):
     pass
 
 
-class NoteUpdatePartial(NoteCreate):
+class NoteUpdatePartialSchema(NoteCreateSchema):
     text: str | None = None
     created_at: datetime | None = None
     active: bool | None = None
 
 
-class Note(NoteBase):
+class NoteSchemaSchema(NoteBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
     id: int

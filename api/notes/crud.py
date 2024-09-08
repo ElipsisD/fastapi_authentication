@@ -1,7 +1,7 @@
 from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.notes.schemas import NoteCreate, NoteUpdate, NoteUpdatePartial
+from api.notes.schemas import NoteCreateSchema, NoteUpdatePartialSchema, NoteUpdateSchema
 from core.models import Note
 
 
@@ -16,7 +16,7 @@ async def get_note(session: AsyncSession, note_id: int) -> Note | None:
     return await session.get(Note, note_id)
 
 
-async def create_note(session: AsyncSession, note_data: NoteCreate) -> Note | None:
+async def create_note(session: AsyncSession, note_data: NoteCreateSchema) -> Note | None:
     note = Note(**note_data.model_dump())
     session.add(note)
     await session.commit()
@@ -26,7 +26,7 @@ async def create_note(session: AsyncSession, note_data: NoteCreate) -> Note | No
 async def update_note(
     session: AsyncSession,
     note: Note,
-    note_data: NoteUpdate | NoteUpdatePartial,
+    note_data: NoteUpdateSchema | NoteUpdatePartialSchema,
     *,
     partial: bool = False,
 ) -> Note:
