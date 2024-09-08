@@ -29,8 +29,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.ruff]
 line-length = 120
 target-version = "py312"
-select = ["ALL"]
-fixable = ["ALL"]
 
 exclude = [
     ".bzr",
@@ -58,7 +56,12 @@ exclude = [
     "alembic",
 ]
 
+[tool.ruff.lint]
+select = ["ALL"]
+fixable = ["ALL"]
+
 ignore = [
+  "ISC001",
   "FA102", # Missing `from __future__ import annotations`, but uses PEP 585 collection
   "D100", # Missing docstring in public module
   "D101", # Missing docstring in public class
@@ -88,5 +91,5 @@ ignore = [
   "DTZ006",
 ]
 
-[tool.ruff.flake8-bugbear]
+[tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.Query", "fastapi.params.Query"]
