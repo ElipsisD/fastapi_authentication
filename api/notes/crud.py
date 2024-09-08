@@ -30,7 +30,7 @@ async def update_note(
     *,
     partial: bool = False,
 ) -> Note:
-    for name, value in note_data.model_dump(exclude_unset=partial).items():
+    for name, value in note_data.model_dump(exclude_none=partial).items():
         setattr(note, name, value)
     await session.commit()
     return note
