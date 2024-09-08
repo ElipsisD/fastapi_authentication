@@ -1,11 +1,12 @@
 from fastapi import Depends, Form, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.auth.utils import get_user_by_username
 from api.users.schemas import UserSchema
 from auth import utils as auth_utils
-from core.models import User
+from core.models import User, db_manager
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="/api/auth/login/")
 
@@ -13,12 +14,13 @@ oauth2_schema = OAuth2PasswordBearer(tokenUrl="/api/auth/login/")
 async def validate_auth_user(
     username: str = Form(),
     password: str = Form(),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> User:
     unauthed_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="invalid username or password",
     )
-    if not (user := await get_user_by_username(username)):
+    if not (user := await get_user_by_username(username, session)):
         raise unauthed_exc
 
     if not auth_utils.validate_password(
@@ -48,9 +50,10 @@ def get_current_token_payload(
 
 async def get_current_auth_user(
     payload: dict = Depends(get_current_token_payload),
+    session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> UserSchema:
     username: str | None = payload.get("sub")
-    if user := await get_user_by_username(username):
+    if user := await get_user_by_username(username, session):
         return UserSchema(
             username=user.username,
             password=user.password,
