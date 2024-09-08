@@ -23,7 +23,7 @@ class NoteUpdatePartialSchema(NoteCreateSchema):
     active: bool | None = None
 
 
-class NoteSchemaSchema(NoteBaseSchema):
+class NoteSchema(NoteBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
