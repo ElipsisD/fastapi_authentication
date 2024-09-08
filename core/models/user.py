@@ -5,5 +5,5 @@ from core.models.base import Base
 
 class User(Base):
     username: Mapped[str] = mapped_column(unique=True)
-    password: Mapped[str]
+    password: Mapped[bytes]
     active: Mapped[bool]
