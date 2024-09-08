@@ -31,7 +31,7 @@ async def get_user_info(
     response_model=list[UserResponseSchema],
 )
 async def get_all_users(
-    user: UserSchema = Depends(get_current_active_auth_user),  # noqa: ARG001
+    _: UserSchema = Depends(get_current_active_auth_user),
     session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> list[User]:
     return await crud.get_users(session=session)
