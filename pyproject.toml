@@ -8,15 +8,16 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.111.1"
-pyjwt = {extras = ["crypto"], version = "^2.8.0"}
-uvicorn = {extras = ["standard"], version = "^0.30.1"}
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.31"}
+fastapi = "^0.114.0"
+pyjwt = { extras = ["crypto"], version = "^2.8.0" }
+uvicorn = { extras = ["standard"], version = "^0.30.1" }
+sqlalchemy = { extras = ["asyncio"], version = "^2.0.31" }
 aiosqlite = "^0.20.0"
 pydantic-settings = "^2.3.4"
 alembic = "^1.13.2"
 bcrypt = "^4.2.0"
 python-multipart = "^0.0.9"
+motor = "^3.5.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -61,34 +62,34 @@ select = ["ALL"]
 fixable = ["ALL"]
 
 ignore = [
-  "ISC001",
-  "FA102", # Missing `from __future__ import annotations`, but uses PEP 585 collection
-  "D100", # Missing docstring in public module
-  "D101", # Missing docstring in public class
-  "D103", # Missing docstring in public func
-  "D102", # Missing docstring in public method
-  "D104", # Missing docstring in public package
-  "D105", # Missing docstring in magic method
-  "D106", # Missing docstring in public nested class
-  "D107", # Missing docstring in __init__
-  "ANN101", # Missing type annotation for `self` in method
-  "D202", # No blank lines allowed after function docstring (found 1)
-  "D203", # 1 blank line required before class docstring
-  "D212", # Multi-line docstring summary should start at the first line
-  "ANN002", # Missing type annotation for `*args`
-  "ANN003", # Missing type annotation for `**kwargs`
-  "ANN101", # Missing type annotation for `self` in method
-  "ANN102", # Missing type annotation for `cls` in classmethod
-  "FIX002", # Line contains TODO, consider resolving the issue
-  "TD002", # Missing author in TODO
-  "TD003", # Missing issue link on the line following this TODO
-  "RUF001", # String contains ambiguous
-  "RUF002", # String contains ambiguous
-  "RUF003", # String contains ambiguous
-  "W293", # Blank line contains whitespace
-  "G004", # Logging statement uses f-string
-  "COM812", # Trailing comma missing
-  "DTZ006",
+    "ISC001",
+    "FA102", # Missing `from __future__ import annotations`, but uses PEP 585 collection
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D103", # Missing docstring in public func
+    "D102", # Missing docstring in public method
+    "D104", # Missing docstring in public package
+    "D105", # Missing docstring in magic method
+    "D106", # Missing docstring in public nested class
+    "D107", # Missing docstring in __init__
+    "ANN101", # Missing type annotation for `self` in method
+    "D202", # No blank lines allowed after function docstring (found 1)
+    "D203", # 1 blank line required before class docstring
+    "D212", # Multi-line docstring summary should start at the first line
+    "ANN002", # Missing type annotation for `*args`
+    "ANN003", # Missing type annotation for `**kwargs`
+    "ANN101", # Missing type annotation for `self` in method
+    "ANN102", # Missing type annotation for `cls` in classmethod
+    "FIX002", # Line contains TODO, consider resolving the issue
+    "TD002", # Missing author in TODO
+    "TD003", # Missing issue link on the line following this TODO
+    "RUF001", # String contains ambiguous
+    "RUF002", # String contains ambiguous
+    "RUF003", # String contains ambiguous
+    "W293", # Blank line contains whitespace
+    "G004", # Logging statement uses f-string
+    "COM812", # Trailing comma missing
+    "DTZ006",
 ]
 
 [tool.ruff.lint.flake8-bugbear]
