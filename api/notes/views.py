@@ -11,12 +11,21 @@ from api.notes.schemas import (
     NoteUpdateSchema,
 )
 from core.models import Note, db_manager, mongo_db_manager
+
 from .dependencies import note_by_id
 
 router = APIRouter(tags=["Notes"])
 
 
-@router.get("/", response_model=list[NoteSchemaSchema])
+@router.get(
+    "/test/",
+    status_code=status.HTTP_200_OK,
+)
+async def test_mongo() -> None:
+    await mongo_db_manager.collection.insert_one({"key": "value", "value": "key"})
+
+
+@router.get("/", response_model=list[NoteSchema])
 async def get_notes(
     session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> list[NoteSchema]:
