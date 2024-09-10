@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 
 BASE_DIR = Path(__file__).parent.parent
 
-DB_PATH = BASE_DIR / "db.sqlite"
+DB_PATH = BASE_DIR / "data/sql" / "db.sqlite"
 
 
 class DbSettings(BaseModel):
