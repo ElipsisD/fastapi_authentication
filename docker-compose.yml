@@ -1,0 +1,36 @@
+services:
+
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: auth.fastapi
+    volumes:
+      - .:/opt
+    ports:
+      - "80:80"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB__USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB__PASSWORD}
+    depends_on:
+      - mongo_db
+    restart: always
+    networks:
+      - auth_network
+
+  mongo_db:
+    image: mongo:latest
+    container_name: auth.mongo
+    env_file: .env
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/mongo_db:/data/db
+    networks:
+      - auth_network
+
+networks:
+  auth_network:
+    name: auth_network
+    driver: bridge
+    external: true
