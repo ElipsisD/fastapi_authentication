@@ -28,10 +28,10 @@ async def get_user_info(
 
 @router.get(
     "/",
+    dependencies=[Depends(get_current_active_auth_user)],
     response_model=list[UserResponseSchema],
 )
 async def get_all_users(
-    _: UserSchema = Depends(get_current_active_auth_user),
     session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> list[User]:
     return await crud.get_users(session=session)
