@@ -1,12 +1,10 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import exists, select
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.auth.validation import get_current_active_auth_user, get_current_token_payload
 from api.users import crud
-from api.users.dependencies import get_user_data_for_registration
 from api.users.schemas import UserResponseSchema, UserSchema
 from core.models import User, db_manager
 
@@ -35,25 +33,3 @@ async def get_all_users(
     session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> list[User]:
     return await crud.get_users(session=session)
-
-
-@router.post("/register/")
-async def register_new_user(
-    user_in: UserSchema = Depends(get_user_data_for_registration),
-    session: AsyncSession = Depends(db_manager.session_dependency),
-) -> dict[str, str]:
-    user_exists = await session.execute(select(exists().where(User.username == user_in.username)))
-    if user_exists.scalar():
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="User with same 'username' already registered",
-        )
-
-    user = await crud.create_user(
-        session=session,
-        user_data=user_in,
-    )
-    return {
-        "status": "success",
-        "username": user.username,
-    }
