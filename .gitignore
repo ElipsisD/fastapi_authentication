@@ -213,7 +213,7 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
+backend/.venv
 env/
 venv/
 ENV/
@@ -267,4 +267,4 @@ static
 /server_config/
 
 db.sqlite
-/certs/
+/backend/certs/

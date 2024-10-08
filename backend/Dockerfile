@@ -7,7 +7,7 @@ RUN poetry self add poetry-plugin-export
 
 WORKDIR /tmp
 
-COPY ./pyproject.toml ./poetry.lock* /tmp/
+COPY pyproject.toml ./poetry.lock* /tmp/
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 FROM python:3.12
@@ -22,6 +22,6 @@ WORKDIR /opt
 COPY --from=builder /tmp/requirements.txt /opt/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /opt/requirements.txt
 
-COPY . /opt
+COPY .. /opt
 
-CMD ["uvicorn", "main:app", "--port", "80", "--host", "0.0.0.0", "--reload"]
+CMD ["uvicorn", "app.main:app", "--port", "80", "--host", "0.0.0.0", "--reload"]

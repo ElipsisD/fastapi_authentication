@@ -3,15 +3,15 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.notes import crud
-from api.notes.schemas import (
+from app.api.notes.schemas import (
     NoteCreateSchema,
     NoteSchema,
     NoteUpdatePartialSchema,
     NoteUpdateSchema,
 )
-from core.models import Note, db_manager, mongo_db_manager
+from app.models import Note, db_manager, mongo_db_manager
 
+from . import crud
 from .dependencies import note_by_id
 
 router = APIRouter(tags=["Notes"])

@@ -2,8 +2,8 @@ from fastapi import Depends
 from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.users.schemas import UserSchema
-from core.models import User, db_manager
+from app.api.users.schemas import UserSchema
+from app.models import User, db_manager
 
 
 async def get_users(session: AsyncSession) -> list[User]:

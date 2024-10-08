@@ -2,11 +2,12 @@ services:
 
   backend:
     build:
-      context: ./
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: ./Dockerfile
     container_name: auth.fastapi
     volumes:
-      - .:/opt
+      - ./backend:/opt
+      - ./data:/opt/data
     ports:
       - "80:80"
     environment:

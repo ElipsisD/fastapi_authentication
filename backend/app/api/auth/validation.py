@@ -3,10 +3,10 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.auth.utils import get_user_by_username
-from api.users.schemas import UserSchema
-from auth import utils as auth_utils
-from core.models import User, db_manager
+from app.api.auth.utils import get_user_by_username
+from app.api.users.schemas import UserSchema
+from app.auth import utils as auth_utils
+from app.models import User, db_manager
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="/api/auth/login/")
 

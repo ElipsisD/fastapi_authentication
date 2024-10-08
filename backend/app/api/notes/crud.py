@@ -1,8 +1,12 @@
 from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.notes.schemas import NoteCreateSchema, NoteUpdatePartialSchema, NoteUpdateSchema
-from core.models import Note
+from app.api.notes.schemas import (
+    NoteCreateSchema,
+    NoteUpdatePartialSchema,
+    NoteUpdateSchema,
+)
+from app.models import Note
 
 
 async def get_notes(session: AsyncSession) -> list[Note]:
@@ -16,7 +20,9 @@ async def get_note(session: AsyncSession, note_id: int) -> Note | None:
     return await session.get(Note, note_id)
 
 
-async def create_note(session: AsyncSession, note_data: NoteCreateSchema) -> Note | None:
+async def create_note(
+    session: AsyncSession, note_data: NoteCreateSchema
+) -> Note | None:
     note = Note(**note_data.model_dump())
     session.add(note)
     await session.commit()

@@ -4,12 +4,12 @@ from sqlalchemy import exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from api.auth.validation import validate_auth_user
-from api.users import crud
-from api.users.dependencies import get_user_data_for_registration
-from api.users.schemas import UserSchema
-from auth import utils as auth_utils
-from core.models import User, db_manager
+from app.api.auth.validation import validate_auth_user
+from app.api.users import crud
+from app.api.users.dependencies import get_user_data_for_registration
+from app.api.users.schemas import UserSchema
+from app.auth import utils as auth_utils
+from app.models import User, db_manager
 
 router = APIRouter(tags=["JWTAuth"])
 
@@ -39,7 +39,9 @@ async def register_new_user(
     user_in: UserSchema = Depends(get_user_data_for_registration),
     session: AsyncSession = Depends(db_manager.session_dependency),
 ) -> dict[str, str]:
-    user_exists = await session.execute(select(exists().where(User.username == user_in.username)))
+    user_exists = await session.execute(
+        select(exists().where(User.username == user_in.username))
+    )
     if user_exists.scalar():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = Path(__file__).parent.parent.parent
 
 DB_PATH = BASE_DIR / "data/sql" / "db.sqlite"
 
@@ -28,7 +28,9 @@ class AuthJWT(BaseModel):
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_nested_delimiter="__")
+    model_config = SettingsConfigDict(
+        env_file=".env", extra="ignore", env_nested_delimiter="__"
+    )
 
     db: DBSettings = DBSettings()
     mongo_db: MongoDBSettings = MongoDBSettings()
