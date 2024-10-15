@@ -266,5 +266,6 @@ static
 /data/
 /server_config/
 
-db.sqlite
-/backend/certs/
+*.sqlite
+/catalog/certs/
+/diagrams/
