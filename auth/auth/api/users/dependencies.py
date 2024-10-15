@@ -2,8 +2,8 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from app.api.users.schemas import UserCreateSchema, UserSchema
-from app.auth.utils import hash_password
+from auth.api.users.schemas import UserCreateSchema, UserSchema
+from auth.auth.utils import hash_password
 
 
 async def get_user_data_for_registration(

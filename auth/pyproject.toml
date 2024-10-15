@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "FastApiAuthentication"
+name = "Auth serice"
 version = "0.1.0"
-description = "A FastAPI authentication project"
+description = "Auth serice based on FastAPI"
 authors = ["Dmitry <da-boyko@mail.ru>"]
 readme = "README.md"
 package-mode = false
@@ -17,7 +17,6 @@ pydantic-settings = "^2.3.4"
 alembic = "^1.13.2"
 bcrypt = "^4.2.0"
 python-multipart = "0.*"
-motor = "^3.5.1"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -24,4 +24,4 @@ RUN pip install --no-cache-dir --upgrade -r /opt/requirements.txt
 
 COPY .. /opt
 
-CMD ["uvicorn", "app.main:app", "--port", "80", "--host", "0.0.0.0", "--reload"]
+CMD ["uvicorn", "auth.main:app", "--port", "8001", "--host", "0.0.0.0", "--reload"]

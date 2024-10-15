@@ -3,13 +3,13 @@ from datetime import datetime
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.auth.validation import (
+from auth.api.auth.validation import (
     get_current_active_auth_user,
     get_current_token_payload,
 )
-from app.api.users import crud
-from app.api.users.schemas import UserResponseSchema, UserSchema
-from app.models import User, db_manager
+from auth.api.users import crud
+from auth.api.users.schemas import UserResponseSchema, UserSchema
+from auth.models import User, db_manager
 
 router = APIRouter(tags=["Users"])
 

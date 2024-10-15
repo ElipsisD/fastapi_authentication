@@ -4,12 +4,13 @@ from sqlalchemy import exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app.api.auth.validation import validate_auth_user
-from app.api.users import crud
-from app.api.users.dependencies import get_user_data_for_registration
-from app.api.users.schemas import UserSchema
-from app.auth import utils as auth_utils
-from app.models import User, db_manager
+from auth.api.users import crud
+from auth.api.users.dependencies import get_user_data_for_registration
+from auth.api.users.schemas import UserSchema
+from auth.auth import utils as auth_utils
+from auth.models import User, db_manager
+
+from .validation import get_current_active_auth_user, validate_auth_user
 
 router = APIRouter(tags=["JWTAuth"])
 
@@ -56,3 +57,8 @@ async def register_new_user(
         "status": "success",
         "username": user.username,
     }
+
+
+@router.post("/check/", dependencies=[Depends(get_current_active_auth_user)])
+async def check_login() -> None:
+    return None
