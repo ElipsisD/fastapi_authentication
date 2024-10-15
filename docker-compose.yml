@@ -1,27 +1,56 @@
 services:
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: ./Dockerfile
-    container_name: auth.fastapi
+  gateway:
+    container_name: ms.gateway
+    image: nginx:latest
     volumes:
-      - ./backend:/opt
-      - ./data:/opt/data
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - auth_network
+    depends_on:
+      - auth
+      - catalog
+    restart: unless-stopped
     ports:
       - "80:80"
+
+  auth:
+    build:
+      context: ./auth
+      dockerfile: ./Dockerfile
+    container_name: ms.auth
+    volumes:
+      - ./auth:/opt
+      - ./auth/data:/opt/data
+    ports:
+      - "8001:8001"
+    restart: always
+    networks:
+      - auth_network
+
+  catalog:
+    build:
+      context: ./catalog
+      dockerfile: ./Dockerfile
+    container_name: ms.catalog
+    volumes:
+      - ./catalog:/opt
+      - ./catalog/data:/opt/data
+    ports:
+      - "8002:8002"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB__USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB__PASSWORD}
     depends_on:
       - mongo_db
+      - auth
     restart: always
     networks:
       - auth_network
 
   mongo_db:
     image: mongo:latest
-    container_name: auth.mongo
+    container_name: ms.mongo
     env_file: .env
     ports:
       - "27017:27017"
@@ -29,6 +58,30 @@ services:
       - ./data/mongo_db:/data/db
     networks:
       - auth_network
+
+  #  rabbitmq:
+  #    image: rabbitmq:3-management-alpine
+  #    hostname: rabbitmq
+  #    container_name: ms.rabbitmq
+  #    ports:
+  #      - "5672:5672"
+  #      - "15672:15672"
+  #    environment:
+  #      RABBITMQ_DEFAULT_USER: "guest"
+  #      RABBITMQ_DEFAULT_PASS: "guest"
+  #    volumes:
+  #      - rabbitmq-data:/var/lib/rabbitmq
+  #
+  #volumes:
+  #  rabbitmq-data:
+
+  dozzle:
+    container_name: ms.dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:8080"
 
 networks:
   auth_network:
