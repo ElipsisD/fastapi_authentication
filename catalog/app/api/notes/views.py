@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Cookie, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.notes.schemas import (
@@ -28,7 +28,9 @@ async def test_mongo() -> None:
 @router.get("/", response_model=list[NoteSchema])
 async def get_notes(
     session: AsyncSession = Depends(db_manager.session_dependency),
+    user_id: int = Cookie(alias="userId"),
 ) -> list[NoteSchema]:
+    print(user_id)
     note_objects = await crud.get_notes(session)
     return [NoteSchema.model_validate(note) for note in note_objects]
 
