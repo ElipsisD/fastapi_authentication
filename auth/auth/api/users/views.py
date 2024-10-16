@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.api.users import crud
-from auth.api.users.schemas import UserResponseSchema, UserSchema
+from auth.api.users.schemas import UserResponseSchema
 from auth.dependencies import get_current_active_auth_user, get_current_token_payload
 from auth.models import User, db_manager
 
@@ -14,7 +14,7 @@ router = APIRouter(tags=["Users"])
 @router.get("/me/")
 async def get_user_info(
     payload: dict = Depends(get_current_token_payload),
-    user: UserSchema = Depends(get_current_active_auth_user),
+    user: User = Depends(get_current_active_auth_user),
 ) -> dict[str, bool | datetime | str]:
     iat = payload.get("iat")
     return {

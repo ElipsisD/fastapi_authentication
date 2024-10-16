@@ -67,13 +67,10 @@ def get_current_token_payload(
 async def get_current_auth_user(
     payload: dict = Depends(get_current_token_payload),
     session: AsyncSession = Depends(db_manager.session_dependency),
-) -> UserSchema:
+) -> User:
     username: str | None = payload.get("sub")
     if user := await get_user_by_username(username, session):
-        return UserSchema(
-            username=user.username,
-            password=user.password,
-        )
+        return user
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="token invalid",
@@ -81,8 +78,8 @@ async def get_current_auth_user(
 
 
 async def get_current_active_auth_user(
-    user: UserSchema = Depends(get_current_auth_user),
-) -> UserSchema:
+    user: User = Depends(get_current_auth_user),
+) -> User:
     if user.active:
         return user
 
