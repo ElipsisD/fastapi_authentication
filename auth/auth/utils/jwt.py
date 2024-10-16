@@ -1,12 +1,8 @@
 from datetime import UTC, datetime, timedelta
 
-import bcrypt
 import jwt
-from sqlalchemy import Result, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.config import settings
-from auth.models import User
 
 
 def encode_jwt(
@@ -44,30 +40,3 @@ def decode_jwt(
         public_key,
         algorithms=[algorithm],
     )
-
-
-def hash_password(
-    password: str,
-) -> bytes:
-    salt = bcrypt.gensalt()
-    pwd_bytes: bytes = password.encode()
-    return bcrypt.hashpw(pwd_bytes, salt)
-
-
-def validate_password(
-    password: str,
-    hashed_password: bytes,
-) -> bool:
-    return bcrypt.checkpw(
-        password=password.encode(),
-        hashed_password=hashed_password,
-    )
-
-
-async def get_user_by_username(
-    username: str,
-    session: AsyncSession,
-) -> User | None:
-    stmt = select(User).filter(User.username == username)
-    result: Result = await session.execute(stmt)
-    return result.scalar_one()

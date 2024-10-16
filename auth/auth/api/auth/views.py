@@ -5,12 +5,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from auth.api.users import crud
-from auth.api.users.dependencies import get_user_data_for_registration
 from auth.api.users.schemas import UserSchema
-from auth.auth import utils as auth_utils
+from auth.dependencies import (
+    get_current_active_auth_user,
+    get_user_data_for_registration,
+    validate_auth_user,
+)
 from auth.models import User, db_manager
-
-from .validation import get_current_active_auth_user, validate_auth_user
+from auth.utils.jwt import encode_jwt
 
 router = APIRouter(tags=["JWTAuth"])
 
@@ -28,7 +30,7 @@ def auth_user_issue_jwt(
         "sub": user.username,
         "username": user.username,
     }
-    access_token = auth_utils.encode_jwt(jwt_payload)
+    access_token = encode_jwt(jwt_payload)
     return TokenInfo(
         access_token=access_token,
         token_type="Bearer",  # noqa: S106

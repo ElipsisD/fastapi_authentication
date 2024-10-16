@@ -1,12 +1,28 @@
-from fastapi import Depends, Form, HTTPException, status
+from typing import Annotated
+
+from fastapi import Depends, Form, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
-from auth.api.users.schemas import UserSchema
-from auth.auth import utils as auth_utils
-from auth.auth.utils import get_user_by_username
-from auth.models import User, db_manager
+from .api.users.schemas import UserCreateSchema, UserSchema
+from .models import User, db_manager
+from .utils.jwt import decode_jwt
+from .utils.password import hash_password, validate_password
+from .utils.user import get_user_by_username
+
+
+async def get_user_data_for_registration(
+    user_data: Annotated[UserCreateSchema, Depends()],
+) -> UserSchema:
+    password = hash_password(user_data.raw_password)
+    return UserSchema(
+        username=user_data.username,
+        password=password,
+        active=True,
+    )
+
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="/auth/login/")
 
@@ -23,7 +39,7 @@ async def validate_auth_user(
     if not (user := await get_user_by_username(username, session)):
         raise unauthed_exc
 
-    if not auth_utils.validate_password(
+    if not validate_password(
         password=password,
         hashed_password=user.password,
     ):
@@ -39,7 +55,7 @@ def get_current_token_payload(
     token: str = Depends(oauth2_schema),
 ) -> str:
     try:
-        payload = auth_utils.decode_jwt(token=token)
+        payload = decode_jwt(token=token)
     except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
