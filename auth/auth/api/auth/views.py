@@ -59,6 +59,6 @@ async def register_new_user(
     }
 
 
-@router.post("/check/", dependencies=[Depends(get_current_active_auth_user)])
+@router.get("/check/", dependencies=[Depends(get_current_active_auth_user)])
 async def check_login() -> None:
     return None
