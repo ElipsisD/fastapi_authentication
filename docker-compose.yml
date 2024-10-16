@@ -10,6 +10,7 @@ services:
     depends_on:
       - auth
       - catalog
+      - statistic
     restart: unless-stopped
     ports:
       - "80:80"
@@ -21,7 +22,6 @@ services:
     container_name: ms.auth
     volumes:
       - ./auth:/opt
-      - ./auth/data:/opt/data
     ports:
       - "8001:8001"
     restart: always
@@ -35,9 +35,24 @@ services:
     container_name: ms.catalog
     volumes:
       - ./catalog:/opt
-      - ./catalog/data:/opt/data
     ports:
       - "8002:8002"
+    depends_on:
+      - auth
+      - statistic
+    restart: always
+    networks:
+      - auth_network
+
+  statistic:
+    build:
+      context: ./statistic
+      dockerfile: ./Dockerfile
+    container_name: ms.statistic
+    volumes:
+      - ./statistic:/opt
+    ports:
+      - "8003:8003"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB__USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB__PASSWORD}
