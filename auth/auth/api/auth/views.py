@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel
 from sqlalchemy import exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -61,6 +61,8 @@ async def register_new_user(
     }
 
 
-@router.get("/check/", dependencies=[Depends(get_current_active_auth_user)])
-async def check_login() -> None:
-    return None
+@router.get("/check/")
+async def check_login(
+    response: Response, user: User = Depends(get_current_active_auth_user)
+) -> None:
+    response.headers["X-User-Id"] = str(user.id)
