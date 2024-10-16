@@ -8,7 +8,7 @@ from auth.auth import utils as auth_utils
 from auth.auth.utils import get_user_by_username
 from auth.models import User, db_manager
 
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="/api/auth/login/")
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="/auth/login/")
 
 
 async def validate_auth_user(
