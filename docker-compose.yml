@@ -57,20 +57,20 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB__USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB__PASSWORD}
     depends_on:
-      - mongo_db
+      - statistic_mongo
       - auth
     restart: always
     networks:
       - auth_network
 
-  mongo_db:
+  statistic_mongo:
     image: mongo:latest
-    container_name: ms.mongo
+    container_name: ms.statistic_mongo
     env_file: .env
     ports:
       - "27017:27017"
     volumes:
-      - ./data/mongo_db:/data/db
+      - ./statistic/data/:/data/db
     networks:
       - auth_network
 
