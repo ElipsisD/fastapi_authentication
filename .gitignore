@@ -263,7 +263,7 @@ static
 # in your Git repository. Update and uncomment the following line accordingly.
 # <django-project-name>/staticfiles/
 
-/data/
+*/data/
 /server_config/
 
 *.sqlite
