@@ -68,9 +68,8 @@ services:
       - ./statistic:/opt
     ports:
       - "8003:8003"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB__USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB__PASSWORD}
+    env_file:
+      - .env
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -90,7 +89,9 @@ services:
   statistic_mongo:
     image: mongo:latest
     container_name: ms.statistic_mongo
-    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB__USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB__PASSWORD}
     ports:
       - "27017:27017"
     healthcheck:
