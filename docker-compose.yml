@@ -8,9 +8,12 @@ services:
     networks:
       - auth_network
     depends_on:
-      - auth
-      - catalog
-      - statistic
+      auth:
+        condition: service_healthy
+      catalog:
+        condition: service_healthy
+      statistic:
+        condition: service_healthy
     restart: unless-stopped
     ports:
       - "80:80"
@@ -25,6 +28,11 @@ services:
     ports:
       - "8001:8001"
     restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8001/auth/health-check/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - auth_network
 
@@ -38,9 +46,16 @@ services:
     ports:
       - "8002:8002"
     depends_on:
-      - auth
-      - statistic
+      auth:
+        condition: service_healthy
+      statistic:
+        condition: service_healthy
     restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8002/api/health-check/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - auth_network
 
@@ -57,9 +72,18 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB__USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB__PASSWORD}
     depends_on:
-      - statistic_mongo
-      - auth
+      rabbitmq:
+        condition: service_healthy
+      statistic_mongo:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
     restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8003/statistic/health-check/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - auth_network
 
@@ -69,26 +93,35 @@ services:
     env_file: .env
     ports:
       - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
     volumes:
       - ./statistic/data/:/data/db
     networks:
       - auth_network
 
-  #  rabbitmq:
-  #    image: rabbitmq:3-management-alpine
-  #    hostname: rabbitmq
-  #    container_name: ms.rabbitmq
-  #    ports:
-  #      - "5672:5672"
-  #      - "15672:15672"
-  #    environment:
-  #      RABBITMQ_DEFAULT_USER: "guest"
-  #      RABBITMQ_DEFAULT_PASS: "guest"
-  #    volumes:
-  #      - rabbitmq-data:/var/lib/rabbitmq
-  #
-  #volumes:
-  #  rabbitmq-data:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    hostname: rabbitmq
+    container_name: ms.rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_MQ__USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_MQ__PASSWORD}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - auth_network
 
   dozzle:
     container_name: ms.dozzle
@@ -103,3 +136,6 @@ networks:
     name: auth_network
     driver: bridge
     external: true
+
+volumes:
+  rabbitmq-data:
