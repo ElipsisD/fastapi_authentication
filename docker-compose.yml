@@ -101,6 +101,8 @@ services:
       retries: 5
     volumes:
       - ./statistic/data/:/data/db
+      - ./mongod.conf:/etc/mongo/mongod.conf
+    command: mongod --config /etc/mongo/mongod.conf
     networks:
       - auth_network
 
