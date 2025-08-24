@@ -1,27 +1,32 @@
-FROM python:3.12 AS builder
-
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.8.3 POETRY_HOME=/root/poetry python3 -
-ENV PATH="${PATH}:/root/poetry/bin"
-RUN poetry self add poetry-plugin-export
-
-WORKDIR /tmp
-
-COPY pyproject.toml ./poetry.lock* /tmp/
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
-
-FROM python:3.12
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 LABEL authors="Dmitry"
 
-# Python environments.
+RUN apt-get update && \
+    apt-get install -y \
+    bash \
+    nano \
+    curl
+
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /opt
+WORKDIR /app
 
-COPY --from=builder /tmp/requirements.txt /opt/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /opt/requirements.txt
+ENV UV_TOOL_BIN_DIR=/usr/local/bin
 
-COPY .. /opt
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev
 
-CMD ["uvicorn", "statistic_app.main:app", "--port", "8003", "--host", "0.0.0.0", "--reload"]
+COPY .. /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-dev
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+ENTRYPOINT []
+
+CMD ["granian", "statistic_app.main:app", "--interface", "asgi", "--port", "8003", "--host", "0.0.0.0", "--reload"]

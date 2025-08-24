@@ -24,14 +24,16 @@ services:
       dockerfile: ./Dockerfile
     container_name: ms.auth
     volumes:
-      - ./auth:/opt
+      - ./auth:/app
+      - /app/.venv
     ports:
       - "8001:8001"
     restart: always
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8001/auth/health-check/" ]
-      interval: 10s
-      timeout: 5s
+      start_period: 200s
+      interval: 5s
+      timeout: 3s
       retries: 5
     networks:
       - auth_network
@@ -42,7 +44,8 @@ services:
       dockerfile: ./Dockerfile
     container_name: ms.catalog
     volumes:
-      - ./catalog:/opt
+      - ./catalog:/app
+      - /app/.venv
     ports:
       - "8002:8002"
     depends_on:
@@ -65,7 +68,8 @@ services:
       dockerfile: ./Dockerfile
     container_name: ms.statistic
     volumes:
-      - ./statistic:/opt
+      - ./statistic:/app
+      - /app/.venv
     ports:
       - "8003:8003"
     env_file:
@@ -138,7 +142,6 @@ networks:
   auth_network:
     name: auth_network
     driver: bridge
-    external: true
 
 volumes:
   rabbitmq-data:

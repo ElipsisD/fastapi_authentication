@@ -1,35 +1,30 @@
-[tool.poetry]
-name = "Backend service"
+[project]
+name = "catalog"
 version = "0.1.0"
 description = "Backend service based on FastAPI"
 authors = ["Dmitry <da-boyko@mail.ru>"]
 readme = "README.md"
-package-mode = false
+requires-python = ">=3.12.9"
+dependencies = [
+    "aiosqlite>=0.21.0",
+    "alembic>=1.16.4",
+    "fastapi>=0.116.1",
+    "faststream>=0.5.48",
+    "granian[reload]>=2.5.0",
+    "motor>=3.7.1",
+    "pydantic-settings>=2.10.1",
+    "python-multipart>=0.0.20",
+    "sqlalchemy>=2.0.43",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-fastapi = "0.*"
-uvicorn = { extras = ["standard"], version = "0.*" }
-sqlalchemy = { extras = ["asyncio"], version = "^2.0.31" }
-aiosqlite = "^0.20.0"
-pydantic-settings = "^2.3.4"
-alembic = "^1.13.2"
-python-multipart = "0.*"
-motor = "^3.5.1"
-faststream = {extras = ["rabbit"], version = "^0.5.28"}
-
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.5.3"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "ruff>=0.12.10",
+]
 
 [tool.ruff]
 line-length = 120
 target-version = "py312"
-
 exclude = [
     ".bzr",
     ".direnv",
@@ -53,32 +48,26 @@ exclude = [
     "node_modules",
     "venv",
     "migrations",
-    "alembic",
+    "app_scripts",
 ]
 
 [tool.ruff.lint]
 select = ["ALL"]
 fixable = ["ALL"]
-
 ignore = [
-    "ISC001",
     "FA102", # Missing `from __future__ import annotations`, but uses PEP 585 collection
     "D100", # Missing docstring in public module
     "D101", # Missing docstring in public class
-    "D103", # Missing docstring in public func
     "D102", # Missing docstring in public method
     "D104", # Missing docstring in public package
     "D105", # Missing docstring in magic method
     "D106", # Missing docstring in public nested class
     "D107", # Missing docstring in __init__
-    "ANN101", # Missing type annotation for `self` in method
     "D202", # No blank lines allowed after function docstring (found 1)
     "D203", # 1 blank line required before class docstring
     "D212", # Multi-line docstring summary should start at the first line
     "ANN002", # Missing type annotation for `*args`
     "ANN003", # Missing type annotation for `**kwargs`
-    "ANN101", # Missing type annotation for `self` in method
-    "ANN102", # Missing type annotation for `cls` in classmethod
     "FIX002", # Line contains TODO, consider resolving the issue
     "TD002", # Missing author in TODO
     "TD003", # Missing issue link on the line following this TODO
@@ -88,8 +77,30 @@ ignore = [
     "W293", # Blank line contains whitespace
     "G004", # Logging statement uses f-string
     "COM812", # Trailing comma missing
-    "DTZ006",
+]
+extend-select = [
+    "D401", # Non-imperative-mood
+    "D213", # Multi-line docstring summary should start at the second line
 ]
 
-[tool.ruff.lint.flake8-bugbear]
-extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.Query", "fastapi.params.Query"]
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores] # Игнорированные ошибки для определенных файлов: тестов
+"**/tests/**" = [
+    "S101", # Use of `assert` detected
+    "PLR2004",
+    "ANN001",
+    "ANN201",
+    "ANN202",
+    "ARG001",
+    "D103",
+    "F401",
+    "F403",
+]
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = true
+
+[tool.ruff.lint.flake8-gettext]
+function-names = ["_", "gettext", "ngettext", "ugettetxt"]
