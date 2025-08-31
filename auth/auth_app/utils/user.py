@@ -1,8 +1,7 @@
 from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.models import User
-
+from auth_app.models import User
 
 async def get_user_by_username(
     username: str,

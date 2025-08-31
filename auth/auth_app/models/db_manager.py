@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from auth.config import settings
+from auth_app.config import settings
 
 
 class DatabaseManager:

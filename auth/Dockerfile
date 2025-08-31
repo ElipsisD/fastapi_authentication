@@ -29,4 +29,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 ENTRYPOINT []
 
-CMD ["granian", "auth.main:app", "--interface", "asgi", "--port", "8001", "--host", "0.0.0.0", "--reload"]
+CMD ["granian", "auth_app.main:app", "--interface", "asgi", "--port", "8001", "--host", "0.0.0.0", "--reload"]

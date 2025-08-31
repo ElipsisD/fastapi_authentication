@@ -2,7 +2,7 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 
-from auth.config import settings
+from auth_app.config import settings
 
 
 def encode_jwt(

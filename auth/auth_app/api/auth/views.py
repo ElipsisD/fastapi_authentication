@@ -4,15 +4,15 @@ from sqlalchemy import exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from auth.api.users import crud
-from auth.api.users.schemas import UserSchema
-from auth.dependencies import (
+from auth_app.api.users import crud
+from auth_app.api.users.schemas import UserSchema
+from auth_app.dependencies import (
     get_current_active_auth_user,
     get_user_data_for_registration,
     validate_auth_user,
 )
-from auth.models import User, db_manager
-from auth.utils.jwt import encode_jwt
+from auth_app.models import User, db_manager
+from auth_app.utils.jwt import encode_jwt
 
 router = APIRouter(tags=["JWTAuth"])
 
